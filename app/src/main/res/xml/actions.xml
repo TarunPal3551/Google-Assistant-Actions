@@ -1,34 +1,59 @@
 <actions>
     <action intentName="actions.intent.OPEN_APP_FEATURE">
-        <fulfillment
-            fulfillmentMode="actions.fulfillment.DEEPLINK"
-            urlTemplate="assitantsample.page.link/sample/{?featureName}">
+        <fulfillment urlTemplate="https://assitantsample.page.link/open{?featureName}">
             <parameter name="feature">
-                <entity-set-reference entitySetId="FeatureEntitySet"/>
+                <entity-set-reference entitySetId="FeatureEntitySet" />
             </parameter>
             <parameter-mapping
-                intentParameter="feature"
+                intentParameter="feature.name"
                 urlParameter="featureName" />
         </fulfillment>
-        <entity-set entitySetId="FeatureEntitySet">
-            <entity identifier="FEATUREONE" name="first feature" />
-            <entity identifier="FEATURETWO" name="second feature" />
-        </entity-set>
     </action>
+    <action intentName="actions.intent.START_EXERCISE">
 
-<!--    <action intentName="actions.intent.ORDER_MENU_ITEM">-->
-<!--        <fulfillment urlTemplate="assitantsample.page.link/sample/browse{?food}">-->
-<!--            <parameter-mapping-->
-<!--                intentParameter="menuItem.name"-->
-<!--                urlParameter="food" />-->
-<!--        </fulfillment>-->
-<!--    </action>-->
+        <!-- Each action requires at least one fulfillment that defines how the app will handle this action -->
+        <!-- Define the urlTemplate in the format you define your deeplinks in AndroidManifest.xml -->
 
-<!--    <action intentName="actions.intent.GET_THING">-->
-<!--        <fulfillment urlTemplate="assitantsample.page.link/sample/search{?query}">-->
-<!--            <parameter-mapping-->
-<!--                intentParameter="thing.name"-->
-<!--                urlParameter="query" />-->
-<!--        </fulfillment>-->
-<!--    </action>-->
+        <fulfillment urlTemplate="https://assitantsample.page.link/start{?exerciseType}">
+
+            <!-- Define how the actions parameters (intentParameter) is mapped in the urlTemplate above -->
+
+            <parameter-mapping
+                intentParameter="exercise.name"
+                urlParameter="exerciseType" />
+
+        </fulfillment>
+
+    </action>
+    <action intentName="actions.intent.STOP_EXERCISE">
+        <fulfillment urlTemplate="https://assitantsample.page.link/stop" />
+    </action>
+    <action intentName="actions.intent.GET_EXERCISE_OBSERVATION">
+
+        <!-- You can define the fulfillment mode, it can be SLICE or DEEPLINK -->
+        <!-- When slice is used, make sure you are supporting slices in your app -->
+        <!-- Also, not that the urlTemplate must be of the style content://{slice_provider_authority}/... -->
+        <!-- Make sure that the authority matches with the one defined in AndroidManifest.xml -->
+
+        <fulfillment
+            fulfillmentMode="actions.fulfillment.SLICE"
+            urlTemplate="content://com.example.assitantsample.slices.provider/stats{?exerciseType}">
+
+            <!-- If a parameter is set as required, the action will only be fulfilled if the parameter is found -->
+            <!-- That's why a fallback urlTemplate needs to be provided for such case. -->
+
+            <parameter-mapping
+                intentParameter="exerciseObservation.aboutExercise.name"
+                required="true"
+                urlParameter="exerciseType" />
+
+        </fulfillment>
+
+        <!-- In case the exercise name is not found we fallback to the stats deep-link inside the app -->
+
+        <fulfillment
+            fulfillmentMode="actions.fulfillment.DEEPLINK"
+            urlTemplate="https://assitantsample.page.link\stats" />
+
+    </action>
 </actions>
